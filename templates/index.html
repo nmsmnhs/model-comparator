@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
 </head>
 <body>
-    <form method="post" enctype="multipart/form-data" name="csvFile">
+    <form method="post" enctype="multipart/form-data" id="csvFile" name="csvFile">
     <div>
         <label for="csvFile">Choose CSV dataset file to upload: </label>
-        <input type="file" id="csvFile" name="csvFileInput" accept=".csv">
+        <input type="file" name="csvFileInput" accept=".csv">
     </div>
     <div>
         <button>Submit</button>
     </div>
     </form>
-    
+    <script src="/static/script.js"></script>
 </body>
 </html>
