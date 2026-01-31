@@ -10,17 +10,30 @@ CORS(app)
 def home():
     return render_template('dropdown.html')
 
-@app.route('/load_csv', methods=["POST"])
-def get_csv():
-    if request.method == "POST":
-        f = request.files['csvFileInput']
-        target = request.form["target"]
-        if f.filename == '':
-            return f"No selected file"
-        else:
-            df = pd.read_csv(f)
-            data = get_stats(df, target)
-            return jsonify(data)
+@app.route("/upload", methods=["POST"])
+def upload():
+    file = request.files["csvFileInput"]
+
+    df = pd.read_csv(file)
+
+    columns = df.columns.tolist()
+
+    # store df temporarily (session / global / cache)
+    df.to_csv("temp.csv", index=False)
+
+    return jsonify({
+        "columns": columns
+    })
+
+@app.route("/analyze", methods=["POST"])
+def analyze():
+    target_col = request.json["target"]
+
+    df = pd.read_csv("temp.csv")
+
+    result = get_stats(df, target_col)
+
+    return jsonify(result)
 
 @app.route('/results', methods=["POST"])
 def show_chart():
