@@ -1,22 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-
+    <title>ML Model Analyzer</title>
+    <link rel="stylesheet" href="C:\Users\ACER\OneDrive\Desktop\model-comparator\static\styles.css">
 </head>
 <body>
-    <form method="post" enctype="multipart/form-data" id="csvFile" name="csvFile">
-    <div>
-        <label for="csvFile">Choose CSV dataset file to upload: </label>
-        <input type="file" name="csvFileInput" accept=".csv">
-    </div>
-    <div>
-        <button>Submit</button>
-    </div>
+
+<div class="container">
+    <h1>Machine Learning Model Analyzer</h1>
+
+    <form id="csvForm" enctype="multipart/form-data">
+        <input type="file" name="csvFileInput" accept=".csv" required>
+        <button type="submit">Upload Dataset</button>
     </form>
-    <select id="targetSelect"></select>
-    <script src="/static/script.js"></script>
+
+    <div id="dropdownSection" class="hidden">
+        <h3>Select Target Variable</h3>
+        <select id="targetSelect"></select>
+        <button id="analyzeBtn">Run Analysis</button>
+    </div>
+</div>
+
+<script src="C:\Users\ACER\OneDrive\Desktop\model-comparator\static\script.js"></script>
 </body>
 </html>

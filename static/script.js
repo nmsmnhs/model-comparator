@@ -1,40 +1,23 @@
-const form = document.querySelector("#csvFile")
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const formData = new FormData(form);
+console.log("script loaded");
 
-  const response = await fetch("http://127.0.0.1:5000/load_csv", {
-    method: "POST",
-    body: formData,
-  });
-  
-});
-fetch("/upload", {
-  method: "POST",
-  body: formData
-})
-.then(res => res.json())
-.then(data => {
-  const select = document.getElementById("targetSelect");
+document.addEventListener("DOMContentLoaded", () => {
 
-  data.columns.forEach(col => {
-    const option = document.createElement("option");
-    option.value = col;
-    option.textContent = col;
-    select.appendChild(option);
-  });
-});
+    const form = document.getElementById("csvForm");
+    console.log("Form:", form);
 
-const target = document.getElementById("targetSelect").value;
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        console.log("Submit clicked");
 
-fetch("/analyze", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({ target })
-})
-.then(res => res.json())
-.then(data => {
-  console.log(data);
+        const formData = new FormData(form);
+
+        const res = await fetch("/upload", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await res.json();
+        console.log("Upload response:", data);
+    });
+
 });
