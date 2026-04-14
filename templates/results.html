@@ -1,24 +1,62 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Results</title>
     <link rel="stylesheet" href="/static/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
 
-<div class="container">
-    <h1>Model Evaluation Results</h1>
+    <div class="page-wrap" id="resultsRoot">
 
-    <canvas id="accuracyChart"></canvas>
-    <canvas id="precisionChart"></canvas>
-    <canvas id="rocChart"></canvas>
+        <h1>Model Evaluation Results</h1>
 
-    <div id="bestModels"></div>
+        <div class="best-banner" id="bestModelsBanner"></div>
 
-    <a href="/">Analyze Another Dataset</a>
-</div>
+        <div class="card">
+            <p class="section-header">Performance Metrics</p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>Accuracy</th>
+                            <th>Precision</th>
+                            <th>AUC</th>
+                            <th>Train Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="metricsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
 
-<script src="/static/script.js"></script>
+        <div class="card">
+            <p class="section-header">Accuracy &amp; Precision Comparison</p>
+            <div class="chart-wrap">
+                <canvas id="barChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card" id="rocSection">
+            <p class="section-header">ROC Curves (Binary Classification)</p>
+            <div class="chart-wrap">
+                <canvas id="rocChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <p class="section-header">Confusion Matrices</p>
+            <div class="cm-grid" id="confusionMatrices"></div>
+        </div>
+
+        <a href="/" class="back-link">← Analyze Another Dataset</a>
+
+    </div>
+
+    <script src="/static/script.js"></script>
 </body>
+
 </html>

@@ -1,38 +1,41 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ML Model Analyzer</title>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
+
 <body>
 
-<div class="page-wrap">
-    <h1>Machine Learning Model Analyzer</h1>
+    <div class="page-wrap">
+        <h1>Machine Learning Model Analyzer</h1>
 
-    <div class="card">
-        <p class="card-title">Upload Dataset</p>
-        <form id="csvForm" enctype="multipart/form-data">
-            <div class="upload-zone">
-                <span class="upload-icon">⬆</span>
-                <p>Click to select a CSV file</p>
-                <span id="fileLabel">No file chosen</span>
-                <input type="file" name="csvFileInput" accept=".csv" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Upload Dataset</button>
-        </form>
-        <div id="uploadStatus" class="status hidden"></div>
+        <div class="card">
+            <p class="card-title">Upload Dataset</p>
+            <form id="csvForm" enctype="multipart/form-data">
+                <div class="upload-zone">
+                    <span class="upload-icon">⬆</span>
+                    <p>Click to select a CSV file</p>
+                    <span id="fileLabel">No file chosen</span>
+                    <input type="file" name="csvFileInput" accept=".csv" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Upload Dataset</button>
+            </form>
+            <div id="uploadStatus" class="status hidden"></div>
+        </div>
+
+        <div id="dropdownSection" class="card hidden">
+            <p class="card-title">Select Target Variable</p>
+            <select id="targetSelect"></select>
+            <button id="analyzeBtn" class="btn btn-primary">Run Analysis</button>
+            <div id="analyzeStatus" class="status hidden"></div>
+        </div>
     </div>
 
-    <div id="dropdownSection" class="card hidden">
-        <p class="card-title">Select Target Variable</p>
-        <select id="targetSelect"></select>
-        <button id="analyzeBtn" class="btn btn-primary">Run Analysis</button>
-        <div id="analyzeStatus" class="status hidden"></div>
-    </div>
-</div>
-
-<script src="/static/script.js"></script>
+    <script src="/static/script.js"></script>
 </body>
+
 </html>
