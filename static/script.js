@@ -1,11 +1,47 @@
-document.addEventListener("DOMContentLoaded", () => {
+let sessionId = null;
 
+function setStatus(el, msg, type = "info") {
+    el.textContent = msg;
+    el.className = `status status--${type}`;
+    el.classList.remove("hidden");
+}
+
+function showSpinner(btn, label) {
+    btn.disabled = true;
+    btn.dataset.originalText = btn.textContent;
+    btn.innerHTML = `<span class="spinner"></span>${label}`;
+}
+
+function resetBtn(btn) {
+    btn.disabled = false;
+    btn.textContent = btn.dataset.originalText || btn.textContent;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("csvForm");
-    console.log("Form:", form);
     if (form) {
+        const uploadStatus = document.getElementById("uploadStatus");
+        const dropdownSection = document.getElementById("dropdownSection");
+        const targetSelect = document.getElementById("targetSelect");
+        const analyzeBtn = document.getElementById("analyzeBtn");
+        const analyzeStatus = document.getElementById("analyzeStatus");
+        const fileInput = form.querySelector('input[type="file"]');
+        const fileLabel = document.getElementById("fileLabel");
+
+        // Custom file label
+        if (fileInput && fileLabel) {
+            fileInput.addEventListener("change", () => {
+                const name = fileInput.files[0]?.name || "No file chosen";
+                fileLabel.textContent = name;
+            });
+        }
+
+        // Step 1: Upload CSV
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
-            console.log("Submit clicked");
+            const submitBtn = form.querySelector("button[type='submit']");
+            showSpinner(submitBtn, " Uploading…");
+            setStatus(uploadStatus, "Uploading dataset…", "info");
 
             const formData = new FormData(form);
             try {
@@ -17,12 +53,29 @@ document.addEventListener("DOMContentLoaded", () => {
                     resetBtn(submitBtn);
                     return;
                 }
+
+                sessionId = data.session_id;
+                setStatus(uploadStatus, `✓ Dataset loaded — ${data.rows} rows, ${data.columns.length} columns`, "success");
+
+                // Populate dropdown
+                targetSelect.innerHTML = "";
+                data.columns.forEach(col => {
+                    const opt = document.createElement("option");
+                    opt.value = col;
+                    opt.textContent = col;
+                    targetSelect.appendChild(opt);
+                });
+
+                dropdownSection.classList.remove("hidden");
+                dropdownSection.scrollIntoView({ behavior: "smooth", block: "start" });
+                resetBtn(submitBtn);
             } catch (err) {
                 setStatus(uploadStatus, `Network error: ${err.message}`, "error");
                 resetBtn(submitBtn);
             }
         });
 
+        // Step 2: Run Analysis
         if (analyzeBtn) {
             analyzeBtn.addEventListener("click", async () => {
                 const target = targetSelect.value;
@@ -44,6 +97,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         resetBtn(analyzeBtn);
                         return;
                     }
+
+                    // Pass results via sessionStorage to results page
                     sessionStorage.setItem("mlResults", JSON.stringify(data));
                     window.location.href = "/results";
                 } catch (err) {
@@ -53,6 +108,8 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
     }
+
+    // ── Results Page ──
     const resultsRoot = document.getElementById("resultsRoot");
     if (resultsRoot) {
         const raw = sessionStorage.getItem("mlResults");
@@ -63,6 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderResults(JSON.parse(raw));
     }
 });
+
 function renderResults(data) {
     const { results, roc_curves, best_models } = data;
     const models = Object.keys(results);
@@ -214,4 +272,3 @@ function chartOptions(title, yLabel, yRange) {
         }
     };
 }
-

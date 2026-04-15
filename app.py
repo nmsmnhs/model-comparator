@@ -6,22 +6,25 @@ from flask_cors import CORS
 from ml_model import get_stats
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-in-prod")
 CORS(app)
 
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
+
 def get_upload_path(session_id):
     return os.path.join(UPLOAD_DIR, f"{session_id}.csv")
+
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
+
 @app.route("/upload", methods=["POST"])
 def upload():
     file = request.files.get("csvFileInput")
-
     if not file:
         return jsonify({"error": "No file uploaded"}), 400
 
@@ -43,6 +46,7 @@ def upload():
         "session_id": session_id
     })
 
+
 @app.route("/analyze", methods=["POST"])
 def analyze():
     data = request.json
@@ -50,18 +54,27 @@ def analyze():
     session_id = data.get("session_id") or session.get("session_id")
 
     if not target_col:
-        return jsonify({"error": "No target selected"}), 400
+        return jsonify({"error": "No target column selected"}), 400
+    if not session_id:
+        return jsonify({"error": "No dataset found. Please upload a CSV first."}), 400
 
     path = get_upload_path(session_id)
-    df = pd.read_csv(path)
-    result = get_stats(df, target_col)
+    if not os.path.exists(path):
+        return jsonify({"error": "Dataset not found. Please re-upload."}), 400
+
+    try:
+        df = pd.read_csv(path)
+        result = get_stats(df, target_col)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
     return jsonify(result)
 
-# STEP 3: Results Page
+
 @app.route("/results")
 def results():
     return render_template("results.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)

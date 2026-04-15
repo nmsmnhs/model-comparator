@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -11,10 +11,16 @@
 <body>
 
     <div class="page-wrap">
-        <h1>Machine Learning Model Analyzer</h1>
 
+        <div class="hero">
+            <h1>Automated <em>Model Evaluation</em><br>for Any CSV Dataset</h1>
+            <p>Upload a dataset, select a target variable, and get instant comparisons across Logistic Regression,
+                Decision Tree, and Random Forest.</p>
+        </div>
+
+        <!-- Step 1: Upload -->
         <div class="card">
-            <p class="card-title">Upload Dataset</p>
+            <p class="card-title">Step 01 — Upload Dataset</p>
             <form id="csvForm" enctype="multipart/form-data">
                 <div class="upload-zone">
                     <span class="upload-icon">⬆</span>
@@ -27,12 +33,14 @@
             <div id="uploadStatus" class="status hidden"></div>
         </div>
 
+        <!-- Step 2: Select Target -->
         <div id="dropdownSection" class="card hidden">
-            <p class="card-title">Select Target Variable</p>
+            <p class="card-title">Step 02 — Select Target Variable</p>
             <select id="targetSelect"></select>
             <button id="analyzeBtn" class="btn btn-primary">Run Analysis</button>
             <div id="analyzeStatus" class="status hidden"></div>
         </div>
+
     </div>
 
     <script src="/static/script.js"></script>
