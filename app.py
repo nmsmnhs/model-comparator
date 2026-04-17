@@ -1,5 +1,6 @@
 import os
 import uuid
+import time
 import pandas as pd
 from flask import Flask, render_template, request, jsonify, session
 from flask_cors import CORS
@@ -10,11 +11,24 @@ app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-in-prod")
 CORS(app)
 
 UPLOAD_DIR = "uploads"
+MAX_AGE_SECONDS = 60 * 60  # delete files older than 1 hour
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 def get_upload_path(session_id):
     return os.path.join(UPLOAD_DIR, f"{session_id}.csv")
+
+
+def cleanup_old_uploads():
+    """Delete upload files older than MAX_AGE_SECONDS."""
+    now = time.time()
+    for filename in os.listdir(UPLOAD_DIR):
+        path = os.path.join(UPLOAD_DIR, filename)
+        if os.path.isfile(path) and (now - os.path.getmtime(path)) > MAX_AGE_SECONDS:
+            try:
+                os.remove(path)
+            except OSError:
+                pass
 
 
 @app.route("/")
@@ -24,6 +38,8 @@ def home():
 
 @app.route("/upload", methods=["POST"])
 def upload():
+    cleanup_old_uploads()  # prune stale files on every new upload
+
     file = request.files.get("csvFileInput")
     if not file:
         return jsonify({"error": "No file uploaded"}), 400
@@ -65,8 +81,12 @@ def analyze():
     try:
         df = pd.read_csv(path)
         result = get_stats(df, target_col)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    finally:
+        # Delete the file immediately after analysis — no need to keep it
+        try:
+            os.remove(path)
+        except OSError:
+            pass
 
     return jsonify(result)
 
